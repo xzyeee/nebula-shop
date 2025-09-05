@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nebula SMP Shop</title>
+<script src="https://www.paypal.com/sdk/js?client-id=ARJohNp7gDYmkAY9LU2f8PXwo_r5wCY4IlobjZlq3ddxcI0YNOIVv81QUQ664NIxj0XSDhzNcWZ_JGCH&currency=EUR"></script>
+<style>
+/* ---------------- Body & Fonts ---------------- */
+body{margin:0;font-family:'Segoe UI',sans-serif;background:#0c0c0c;color:white;overflow-x:hidden;}
+h1,h2,h3{margin:0;}button{font-family:'Segoe UI',sans-serif;cursor:pointer;}
+header{padding:20px;text-align:center;background:#111;box-shadow:0 4px 12px rgba(0,0,0,0.7);}
+.server-name{background:linear-gradient(90deg,#10b981,#2563eb);padding:6px 20px;border-radius:10px;font-weight:bold;font-size:16px;display:inline-block;margin-bottom:4px;}
+.server-ip{color:#aaa;font-size:14px;}
+.nav{display:flex;justify-content:center;gap:12px;margin:20px 0;flex-wrap:wrap;}
+.nav button{padding:12px 20px;border:none;border-radius:12px;font-weight:bold;color:white;background:#10b981;transition:0.3s;box-shadow:0 0 8px #10b981;}
+.nav button:hover{transform:scale(1.05);background:#059669;box-shadow:0 0 15px #10b981,0 0 25px #2563eb;}
+section{display:none;padding:20px;animation:fadeIn 0.5s ease-in-out;}
+section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------------- Rank Card ---------------- */
+.rank-card{background:linear-gradient(135deg,#2563eb,#10b981);max-width:750px;margin:20px auto;border-radius:20px;padding:25px;position:relative;cursor:pointer;box-shadow:0 0 20px rgba(16,185,129,0.7);transition:0.3s;}
+.rank-card:hover{transform:scale(1.03);box-shadow:0 0 30px rgba(16,185,129,1);}
+.rank-card h2{font-size:26px;margin-bottom:10px;text-shadow:0 0 10px #000;}
+.rank-card ul{list-style:circle;margin-left:20px;font-size:16px;}
+.rank-card img{position:absolute;bottom:0px;right:10px;width:300px;transform:scaleX(-1);animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:scaleX(-1) translateY(0);}50%{transform:scaleX(-1) translateY(-15px);}}
+
+/* ---------------- Keys ---------------- */
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:1000px;margin:auto;}
+.key-card{background:#1c1c1c;border-radius:18px;padding:20px;text-align:center;box-shadow:0 0 12px rgba(16,185,129,0.5);transition:0.3s;}
+.key-card:hover{transform:scale(1.05);box-shadow:0 0 25px #10b981,0 0 40px #2563eb;}
+.key-name{font-size:20px;font-weight:bold;margin-bottom:10px;text-shadow:0 0 6px #000;}
+.price{font-size:18px;margin:8px 0;}
+.qty{display:flex;justify-content:center;gap:8px;margin-bottom:12px;}
+.qty button{background:#111;color:white;border:none;padding:6px 12px;border-radius:6px;transition:0.2s;}
+.qty button:hover{background:#333;transform:scale(1.1);}
+
+/* ---------------- Cart ---------------- */
+#cart-container{display:flex;flex-direction:column;align-items:center;gap:15px;max-width:700px;margin:auto;}
+.cart-item{background:#1c1c1c;border-radius:15px;padding:15px 20px;width:100%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 0 15px rgba(16,185,129,0.4);animation:slideIn 0.4s ease-in-out;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+.total{font-size:22px;margin:25px 0;font-weight:bold;color:#10b981;text-shadow:0 0 10px #000;}
+
+/* ---------------- Admin ---------------- */
+#admin-login{max-width:320px;margin:auto;margin-top:20px;}
+#admin-login input{display:block;width:100%;padding:12px;margin:10px 0;border-radius:10px;border:none;outline:none;}
+#admin-login button{background:#ff2d2d;color:white;width:100%;padding:12px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;}
+#admin-panel{max-width:95%;margin:auto;margin-top:20px;overflow-x:auto;display:none;}
+#admin-panel table{width:100%;border-collapse:collapse;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+#admin-panel th,#admin-panel td{padding:12px;text-align:center;}
+#admin-panel th{background:linear-gradient(90deg,#2563eb,#10b981);color:white;}
+#admin-panel tr:nth-child(even){background:#1c1c1c;}
+#admin-panel tr:hover{background:#2a2a2a;}
+
+/* ---------------- Username Modal ---------------- */
+#username-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+#username-modal input{padding:15px;border-radius:10px;border:none;width:280px;margin-bottom:15px;font-size:16px;}
+#username-modal button{padding:14px 22px;border:none;border-radius:12px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;font-size:16px;box-shadow:0 0 10px #10b981;}
+#username-modal button:hover{background:#1d4ed8;transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="server-name">Nebula SMP</div>
+  <div class="server-ip">IP: PLAY.NEBULASMP.EU</div>
+</header>
+
+<div class="nav">
+  <button onclick="showSection('shop')">Shop</button>
+  <button onclick="showSection('cart')">Cart</button>
+  <button onclick="showSection('admin')">Admin</button>
+</div>
+
+<section id="shop">
+  <div class="rank-card" onclick="addToCart('Nebula+ Rank',5.99,1)">
+    <h2>Nebula+ Rank</h2>
+    <p>(30 Day Subscription)</p>
+    <ul>
+      <li>+3 Homes</li>
+      <li>/hide (mask username)</li>
+      <li>/fly in lobbies</li>
+      <li>Faster Auction Buying</li>
+      <li>Get shards everywhere</li>
+      <li>Shorter RTP Cooldown</li>
+      <li>Priority Queue</li>
+    </ul>
+    <img src="https://cdn.discordapp.com/attachments/1413211447483306097/1413582245091999868/minecraft-rendering-player-versus-player-lego-art-png-favpng-MxACwcnDgFkgYWSQ360xkt64T-removebg-preview.png?ex=68bc748e&is=68bb230e&hm=2f741c2262f26e3cc8d35dffb0d6fefaed89d1085e47452a23c4f5381fb98633" alt="Player Render">
+  </div>
+  <div class="keys" id="keys-container"></div>
+</section>
+
+<section id="cart">
+  <h1>Your Cart</h1>
+  <div id="cart-container"></div>
+  <div class="total">Total: €<span id="cart-total">0.00</span></div>
+  <div id="paypal-button-container"></div>
+</section>
+
+<section id="admin">
+  <div id="admin-login">
+    <input type="text" id="admin-user" placeholder="Username">
+    <input type="password" id="admin-pass" placeholder="Password">
+    <button onclick="checkAdmin()">Login</button>
+  </div>
+  <div id="admin-panel">
+    <h1>Admin Panel - Orders</h1>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>Minecraft Username</th><th>Item</th><th>Price (€)</th></tr>
+        </thead>
+        <tbody id="orders-table"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div id="username-modal">
+  <h2>Enter Your Minecraft Username</h2>
+  <input type="text" id="minecraft-username" placeholder="Minecraft Username">
+  <button onclick="submitUsername()">Enter Shop</button>
+</div>
+
+<script>
+// ---------- Username & Cart ----------
+let minecraftUsername = '';
+let cart = [];
+
+function showNotification(message){
+  const notif = document.createElement('div');
+  notif.textContent = message;
+  notif.style.position = 'fixed';
+  notif.style.top = '20px';
+  notif.style.left = '50%';
+  notif.style.transform = 'translateX(-50%)';
+  notif.style.background = '#10b981';
+  notif.style.padding = '12px 20px';
+  notif.style.borderRadius = '10px';
+  notif.style.boxShadow = '0 0 10px #10b981';
+  notif.style.zIndex = 9999;
+  notif.style.fontWeight = 'bold';
+  notif.style.color = 'white';
+  notif.style.animation = 'fadeNotif 1.5s forwards';
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(),1500);
+}
+
+// Keys
+const keys = [
+  {name:'Common Key',price:1.02,color:'limegreen'},
+  {name:'Radiant Key',price:3.08,color:'skyblue'},
+  {name:'Amethyst Key',price:5.14,color:'violet'},
+  {name:'Inferno Key',price:3.08,color:'red'}
+];
+
+// Render keys dynamically
+const keysContainer = document.getElementById('keys-container');
+keysContainer.innerHTML = '';
+keys.forEach(k=>{
+  const card = document.createElement('div'); 
+  card.className = 'key-card';
+  card.innerHTML = `<div class="key-name" style="color:${k.color}">${k.name}</div>
+  <div class="price">€${k.price.toFixed(2)}</div>
+  <div class="qty">
+    <button onclick="addToCart('${k.name}',${k.price},1)">1x</button>
+    <button onclick="addToCart('${k.name}',${k.price},5)">5x</button>
+    <button onclick="addToCart('${k.name}',${k.price},10)">10x</button>
+    <button onclick="addToCart('${k.name}',${k.price},20)">20x</button>
+  </div>`;
+  keysContainer.appendChild(card);
+});
+
+// ---------- Username ----------
+function submitUsername(){
+  const input = document.getElementById('minecraft-username').value.trim();
+  const regex = /^[a-zA-Z0-9_]{3,16}$/;
+  if(!regex.test(input)){alert('Invalid Minecraft username!'); return;}
+  minecraftUsername = input;
+  document.getElementById('username-modal').style.display = 'none';
+  showSection('shop');
+}
+
+// ---------- Section Switching ----------
+function showSection(id){
+  document.querySelectorAll('section').forEach(s=>s.style.display='none');
+  document.getElementById(id).style.display='block';
+  if(id==='cart') renderCart();
+}
+
+// ---------- Add to Cart ----------
+function addToCart(item, price, qty){
+  if(!minecraftUsername){alert('Enter Minecraft username first.'); return;}
+  for(let i=0;i<qty;i++){
+    cart.push({item, price:Number(price), mcUsername:minecraftUsername});
+  }
+  renderCart();
+  showNotification(`"${item}" successfully added to your cart!`);
+}
+
+// ---------- Render Cart ----------
+function renderCart(){
+  const container = document.getElementById('cart-container');
+  const totalSpan = document.getElementById('cart-total');
+  container.innerHTML = '';
+  let total = 0;
+
+  const aggregated = {};
+  cart.forEach(i=>{
+    const key = `${i.mcUsername}|${i.item}`;
+    if(!aggregated[key]) aggregated[key]={...i, qty:0};
+    aggregated[key].qty++;
+  });
+
+  Object.values(aggregated).forEach((i)=>{
+    const itemTotal = i.price*i.qty;
+    total += itemTotal;
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `<span>${i.mcUsername} - ${i.item} ${i.qty>1 ? i.qty+'x' : ''}</span>
+    <span>€${itemTotal.toFixed(2)}
+      <button style="margin-left:10px;background:#ff2d2d;color:white;padding:4px 8px;border:none;border-radius:6px;cursor:pointer;" onclick="removeFromCart('${i.mcUsername}','${i.item}')">X</button>
+    </span>`;
+    container.appendChild(div);
+  });
+
+  totalSpan.textContent = total.toFixed(2);
+
+  document.getElementById('paypal-button-container').innerHTML='';
+  if(cart.length>0){
+    paypal.Buttons({
+      createOrder:(data,actions)=>{
+        const t=cart.reduce((sum,i)=>sum+i.price,0);
+        return actions.order.create({purchase_units:[{description:'Nebula SMP Purchase',amount:{value:t.toFixed(2)}}]});
+      },
+      onApprove:(data,actions)=>actions.order.capture().then(()=>{
+        let orders=JSON.parse(localStorage.getItem('orders'))||[];
+        orders.push(...cart);
+        localStorage.setItem('orders',JSON.stringify(orders));
+        cart=[];
+        renderCart();
+        showSection('shop');
+        alert('Purchase complete!');
+      })
+    }).render('#paypal-button-container');
+  }
+}
+
+// ---------- Remove from Cart ----------
+function removeFromCart(mcUsername,itemName){
+  cart = cart.filter(i => !(i.mcUsername===mcUsername && i.item===itemName));
+  renderCart();
+}
+
+// ---------- Admin ----------
+function checkAdmin(){
+  const u=document.getElementById('admin-user').value;
+  const p=document.getElementById('admin-pass').value;
+  if(u==='xzyee' && p==='veby03082010'){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    renderAdmin();
+  }else{alert('Incorrect username or password!');}
+}
+
+function renderAdmin(){
+  const table=document.getElementById('orders-table');
+  const orders=JSON.parse(localStorage.getItem('orders'))||[];
+  table.innerHTML='';
+  orders.forEach(o=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${o.mcUsername}</td><td>${o.item}</td><td>€${o.price.toFixed(2)}</td>`;
+    table.appendChild(tr);
+  });
+}
+
+// ---------- Notification animation ----------
+const styleSheet=document.createElement("style");
+styleSheet.innerText=`@keyframes fadeNotif{0%{opacity:0;transform:translateY(-10px);}10%{opacity:1;transform:translateY(0);}90%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}`;
+document.head.appendChild(styleSheet);
+</script>
+
+</body>
+</html>
